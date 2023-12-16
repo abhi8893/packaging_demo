@@ -27,7 +27,7 @@ jobs:
           pip install pre-commit
       - name: Lint and code qa checks
         run: |
-          SKIP=no-commit-on-branch pre-commit --all-files
+          SKIP=no-commit-on-branch pre-commit run --all-files
 
   build:
     runs-on: ubuntu-latest

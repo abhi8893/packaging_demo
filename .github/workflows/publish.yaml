@@ -49,9 +49,32 @@ jobs:
           name: wheel-and-sdist
           path: dist/*
 
+  test:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      - uses: action/checkout@v3
+      - name: Setup Python
+        uses: action/setup-python@v3
+        with:
+          python-version: 3.11
+
+      - uses: action/download-artifact@v3
+        with:
+          name: wheel-and-sdist
+          path: dist
+      - name: Install test dependencies
+        run: |
+          pip install pytest pytest-cov dist/*.whl
+      - name: Run tests
+        run: |
+          ./run.sh test:ci
+
   publish:
     runs-on: ubuntu-latest
     needs:
+      - test
       - lint-and-code-quality-checks
       - check-version-txt
       - build

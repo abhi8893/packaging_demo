@@ -90,7 +90,7 @@ function test {
 
     PYTEST_EXIT_STATUS=0
     pytest "${@:-$THIS_DIR/tests}" \
-    --cov="$THIS_DIR/packaging_demo" \
+    --cov="$THIS_DIR/src/packaging_demo" \
     --cov-report html \
     --cov-report term \
     --cov-report xml \
@@ -106,7 +106,6 @@ function test {
 function test:ci {
 
     PYTEST_EXIT_STATUS=0
-    pip install dist/*.whl
     INSTALLED_PKG_DIR="$(python -c 'import packaging_demo; print(packaging_demo.__path__[0])')"
     pytest "$THIS_DIR/tests/" \
     --cov="$INSTALLED_PKG_DIR" \

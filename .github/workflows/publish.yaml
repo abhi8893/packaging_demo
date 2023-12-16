@@ -54,13 +54,13 @@ jobs:
     needs:
       - build
     steps:
-      - uses: action/checkout@v3
+      - uses: actions/checkout@v3
       - name: Setup Python
-        uses: action/setup-python@v3
+        uses: actions/setup-python@v3
         with:
           python-version: 3.11
 
-      - uses: action/download-artifact@v3
+      - uses: actions/download-artifact@v3
         with:
           name: wheel-and-sdist
           path: dist

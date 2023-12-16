@@ -28,8 +28,7 @@ classifiers = [
 dependencies = [
     "fastapi"
 ]
-version = "0.0.1"
-# dynamic = ["version"]
+dynamic = ["version"]
 
 [project.optional-dependencies]
 test = ["pytest", "pytest-cov"]

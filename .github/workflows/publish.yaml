@@ -1,34 +1,88 @@
 name: Build, Test and Publish
 
 on:
-    pull_request:
-        types: [opened, synchronize]
-    push:
-        branches:
-            - main
-
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    branches:
+      - main
 
 jobs:
-    build-test-and-publish:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v3
-            - name: Setup Python
-              uses: actions/setup-python@v3
-              with:
-                python-version: 3.11
-            - run: |
-                /bin/bash run.sh install
-                /bin/bash run.sh build
-                /bin/bash run.sh publish:test
-              env:
-                TEST_PYPI_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
-                PROD_PYPI_TOKEN: ${{ secrets.PROD_PYPI_TOKEN }}
+  check-version-txt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Tag with the release version
+        run: |
+          git tag $(cat version.txt)
 
-            # - name: Install dependencies
-            #   run: |
-            #     pip install --upgrade pip
-            #     pip install pre-commit
-            # - name: Lint
-            #   run: |
-            #     SKIP=no-commit-to-branch precommit run --all-files
+  lint-and-code-quality-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+          pip install pre-commit
+      - name: Lint and code qa checks
+        run: |
+          SKIP=no-commit-on-branch pre-commit --all-files .
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.11
+      - name: Install python dependencies
+        run: |
+          pip install build
+      - name: Lint, format and other code quality checks
+        run: |
+          /bin/bash -x run.sh lint:ci
+      - name: Build source and wheel distribution
+        run: |
+          /bin/bash -x run.sh buil
+      - name: Upload package artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: wheel-and-sdist
+          path: dist/*
+
+  publish:
+    runs-on: ubuntu-latest
+    needs:
+      - lint-and-code-quality-checks
+      - check-version-txt
+      - build
+    if: github.event_name == 'push' && github.ref == '/refs/head/main'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.11
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: wheel-and-sdist
+          path: dist
+      - name: Install twine
+        run: |
+          pip install twine
+
+      - name: Publish to Test PyPI
+        run: |
+          /bin/bash -x run.sh publish:test
+        env:
+          TEST_PYPI_TOKEN: ${{ secrets.TEST_PYPI_TOKEN }}
+
+      - name: Publish to Prod PyPI
+        run: |
+          /bin/bash run.sh publish:prod
+        env:
+          PROD_PYPI_TOKEN: ${{ secrets.PROD_PYPI_TOKEN }}

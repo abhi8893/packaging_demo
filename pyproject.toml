@@ -28,14 +28,13 @@ classifiers = [
 dependencies = [
     "fastapi"
 ]
-version = "0.0.0"
-# dynamic = ["version"]
+dynamic = ["version"]
 
 [project.optional-dependencies]
 test = ["pytest", "pytest-cov"]
 release = ["build", "twine"]
 static-code-qa = ["pre-commit"]
-dev = ["packaging-demo[test,release,static-code-qa]"]
+dev = ["packaging-demo-abhi[test,release,static-code-qa]"]
 
 
 [tool.ruff]

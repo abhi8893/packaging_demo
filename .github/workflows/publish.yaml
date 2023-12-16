@@ -55,7 +55,7 @@ jobs:
       - lint-and-code-quality-checks
       - check-version-txt
       - build
-    if: github.event_name == 'push' && github.ref == '/refs/head/main'
+    if: github.event_name == 'push' && github.ref == 'refs/head/main'
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python

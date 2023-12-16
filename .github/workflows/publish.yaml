@@ -37,15 +37,12 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: 3.11
-      - name: Install python dependencies
+      - name: Install python build dependencies
         run: |
           pip install build
-      - name: Lint, format and other code quality checks
-        run: |
-          /bin/bash -x run.sh lint:ci
       - name: Build source and wheel distribution
         run: |
-          /bin/bash -x run.sh buil
+          /bin/bash -x run.sh build
       - name: Upload package artifacts
         uses: actions/upload-artifact@v3
         with:

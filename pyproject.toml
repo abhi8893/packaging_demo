@@ -37,6 +37,9 @@ static-code-qa = ["pre-commit"]
 dev = ["packaging-demo-abhi[test,release,static-code-qa]"]
 
 
+[tool.setuptools.dynamic]
+version = { file = "version.txt" }
+
 [tool.ruff]
 select = ["E", "F", "B", "ERA"]
 line-length = 99

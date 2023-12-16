@@ -86,4 +86,5 @@ jobs:
 
       - name: Push tags
         run: |
+          git tag $(cat version.txt)
           git push origin --tags

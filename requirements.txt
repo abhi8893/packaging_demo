@@ -32,8 +32,8 @@ nh3==0.2.15
 nodeenv==1.8.0
 numpy==1.26.2
 packaging==23.2
--e git+ssh://git@github.com/abhi8893/packaging_demo.git@868e4c44ce6ada77e9176b05007088325af61756#egg=packaging_demo
 packaging-demo-abhi==0.0.0
+-e git+ssh://git@github.com/abhi8893/packaging_demo.git@868e4c44ce6ada77e9176b05007088325af61756#egg=packaging_demo
 pathspec==0.12.1
 pipdeptree==2.13.1
 pkginfo==1.9.6

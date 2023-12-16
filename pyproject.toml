@@ -1,5 +1,6 @@
 [build-system]
 requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
 # requires = ["hatchling"]
 # build-backend = "hatchling.build"
 
@@ -39,6 +40,14 @@ dev = ["packaging-demo-abhi[test,release,static-code-qa]"]
 
 [tool.setuptools.dynamic]
 version = { file = "version.txt" }
+
+[tool.setuptools.package-data]
+packaging_demo = ["*.json"]
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')"
+]
 
 [tool.ruff]
 select = ["E", "F", "B", "ERA"]

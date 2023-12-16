@@ -17,7 +17,7 @@ function try-load-dotenv {
 }
 
 function clean {
-    rm -rf dist build
+    rm -rf dist build test-reports
 
     find . \
       -type d \
@@ -82,6 +82,48 @@ function release:prod {
     publish:prod
 }
 
+function test:quick {
+    pytest -m "not slow" "$THIS_DIR/tests"
+}
+
+function test {
+
+    PYTEST_EXIT_STATUS=0
+    pytest "${@:-$THIS_DIR/tests}" \
+    --cov="$THIS_DIR/src/packaging_demo" \
+    --cov-report html \
+    --cov-report term \
+    --cov-report xml \
+    --junit-xml "$THIS_DIR/test-reports/report.xml" \
+    --cov-fail-under 80 || ((PYTEST_EXIT_STATUS+=$?))
+
+    mv coverage.xml "$THIS_DIR/test-reports"
+    mv htmlcov "$THIS_DIR/test-reports"
+
+    return $PYTEST_EXIT_STATUS
+}
+
+function test:ci {
+
+    PYTEST_EXIT_STATUS=0
+    INSTALLED_PKG_DIR="$(python -c 'import packaging_demo; print(packaging_demo.__path__[0])')"
+    pytest "$THIS_DIR/tests/" \
+    --cov="$INSTALLED_PKG_DIR" \
+    --cov-report html \
+    --cov-report term \
+    --cov-report xml \
+    --junit-xml "$THIS_DIR/test-reports/report.xml" \
+    --cov-fail-under 80 || ((PYTEST_EXIT_STATUS+=$?))
+
+    mv coverage.xml "$THIS_DIR/test-reports/"
+    mv htmlcov "$THIS_DIR/test-reports/"
+
+    return $PYTEST_EXIT_STATUS
+}
+
+function serve-coverage-report {
+    python -m http.server --directory "$THIS_DIR/htmlcov"
+}
 
 function help {
     echo "$0 <task> <args>"

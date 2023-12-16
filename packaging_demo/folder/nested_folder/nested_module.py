@@ -1,3 +1,0 @@
-from packaging_demo.top_level_module import TOP_LEVEL_CONSTANT
-
-print(TOP_LEVEL_CONSTANT)
